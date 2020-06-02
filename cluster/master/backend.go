@@ -402,7 +402,7 @@ func (s *QKCMasterBackend) Heartbeat() {
 						break
 					}
 				}
-				log.Trace(s.logInfo, "heart beat duration", time.Now().Sub(timeGap).String())
+				//log.Trace(s.logInfo, "heart beat duration", time.Now().Sub(timeGap).String())
 				time.Sleep(config.HeartbeatInterval)
 			}
 		}

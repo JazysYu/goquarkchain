@@ -210,7 +210,7 @@ func (pm *ProtocolManager) handleMsg(peer *Peer) error {
 		return err
 	}
 
-	log.Debug(pm.log, " receive QKC Msgop", qkcMsg.Op.String())
+	//log.Debug(pm.log, " receive QKC Msgop", qkcMsg.Op.String())
 	switch {
 	case qkcMsg.Op == p2p.Hello:
 		return errors.New("Unexpected Hello msg")
@@ -641,7 +641,7 @@ func (pm *ProtocolManager) BroadcastTip(header *types.RootBlockHeader) {
 		}
 		peer.AsyncSendNewTip(0, &p2p.Tip{RootBlockHeader: header, MinorBlockHeaderList: nil})
 	}
-	log.Trace("Announced block", "hash", header.Hash(), "recipients", pm.peers.Len())
+	//log.Trace("Announced block", "hash", header.Hash(), "recipients", pm.peers.Len())
 }
 
 func (pm *ProtocolManager) HandleGetMinorBlockHeaderListWithSkipRequest(peerId string, branch uint32,
