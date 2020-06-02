@@ -22,12 +22,13 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"errors"
-	"github.com/QuarkChain/goquarkchain/p2p/nodefilter"
 	"net"
 	"sort"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/QuarkChain/goquarkchain/p2p/nodefilter"
 
 	"github.com/QuarkChain/goquarkchain/p2p/discover"
 	"github.com/ethereum/go-ethereum/common"
@@ -663,6 +664,7 @@ func (srv *Server) run(dialstate dialer) {
 		for _, peer := range peers {
 			pr := peer
 			if srv.blackNodeFilter.ChkDialoutBlacklist(pr.Node().IP().String()) {
+				log.Info("Removing p2p peer-2", "duration", pr.Node().IP().String())
 				delete(peers, pr.ID())
 			}
 		}
@@ -774,7 +776,7 @@ running:
 				pd.log.Warn("Add this peer to black list", "peer id", pd.Peer.ID().String(), "remote ip", pd.Node().IP().String(), "err", pd.err)
 			}
 			d := common.PrettyDuration(mclock.Now() - pd.created)
-			pd.log.Debug("Removing p2p peer", "duration", d, "peers", len(peers)-1, "req", pd.requested, "err", pd.err)
+			pd.log.Info("Removing p2p peer-1", "duration", d, "peers", len(peers)-1, "req", pd.requested, "err", pd.err)
 			delete(peers, pd.ID())
 			if pd.Inbound() {
 				inboundCount--
@@ -801,6 +803,7 @@ running:
 	for len(peers) > 0 {
 		p := <-srv.delpeer
 		p.log.Trace("<-delpeer (spindown)", "remainingTasks", len(runningTasks))
+		log.Info("Removing p2p peer-3", "---", p.ID())
 		delete(peers, p.ID())
 	}
 }
