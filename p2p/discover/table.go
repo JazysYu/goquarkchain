@@ -652,7 +652,7 @@ func (tab *Table) addIP(b *bucket, ip net.IP) bool {
 		return false
 	}
 	if !b.ips.Add(ip) {
-		log.Debug("IP exceeds bucket limit", "ip", ip, b.ips.Limit, b.ips.String())
+		log.Debug("IP exceeds bucket limit", "ip", ip, "limit", b.ips.Limit, "b.ips.String", b.ips.String())
 		tab.ips.Remove(ip)
 		return false
 	}
