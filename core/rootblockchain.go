@@ -646,8 +646,8 @@ func (bc *RootBlockChain) insertChain(chain []types.IBlock, verifySeals bool) (i
 		}
 		switch status {
 		case CanonStatTy:
-			log.Debug("Inserted new block", "number", block.NumberU64(), "hash", block.Hash(),
-				"minorHeaderd", len(block.Content()), "elapsed", common.PrettyDuration(time.Since(start)))
+			//log.Debug("Inserted new block", "number", block.NumberU64(), "hash", block.Hash(),
+			//	"minorHeaderd", len(block.Content()), "elapsed", common.PrettyDuration(time.Since(start)))
 			lastCanon = block.(*types.RootBlock)
 			events = append(events, RootChainEvent{lastCanon, block.Hash()})
 

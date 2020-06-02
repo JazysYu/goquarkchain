@@ -106,11 +106,11 @@ func (p *Peer) broadcast() {
 		select {
 		case nTxs := <-p.queuedTxs:
 			if err := p.SendTransactions(nTxs); err != nil {
-				p.Log().Error("Broadcast transactions failed",
-					"peerID", nTxs.PeerID, "branch", nTxs.Branch, "error", err.Error())
+				//p.Log().Error("Broadcast transactions failed",
+				//	"peerID", nTxs.PeerID, "branch", nTxs.Branch, "error", err.Error())
 				return
 			}
-			p.Log().Trace("Broadcast transactions", "peerID", nTxs.PeerID, "branch", nTxs.Branch)
+			//p.Log().Trace("Broadcast transactions", "peerID", nTxs.PeerID, "branch", nTxs.Branch)
 
 		case nBlock := <-p.queuedMinorBlock:
 			if err := p.SendNewMinorBlock(nBlock.Branch, nBlock.Data); err != nil {
@@ -207,9 +207,9 @@ func (p *Peer) SendTransactions(p2pTxs *rpc.P2PRedirectRequest) error {
 func (p *Peer) AsyncSendTransactions(txs *rpc.P2PRedirectRequest) {
 	select {
 	case p.queuedTxs <- txs:
-		p.Log().Debug("add transaction to broadcast queue", "peerID", txs.PeerID, "branch", txs.Branch)
+		//p.Log().Debug("add transaction to broadcast queue", "peerID", txs.PeerID, "branch", txs.Branch)
 	default:
-		p.Log().Debug("Dropping transaction propagation", "peerID", txs.PeerID, "branch", txs.Branch)
+		//p.Log().Debug("Dropping transaction propagation", "peerID", txs.PeerID, "branch", txs.Branch)
 	}
 }
 

@@ -1150,10 +1150,10 @@ func (m *MinorBlockChain) insertChain(chain []types.IBlock, verifySeals bool, is
 		}
 		switch status {
 		case CanonStatTy:
-			log.Debug(m.logInfo+" Inserted new block", "number", mBlock.NumberU64(), "hash", mBlock.Hash().TerminalString(),
-				"txs", len(mBlock.GetTransactions()), "gas", mBlock.GetMetaData().GasUsed.Value.Uint64(),
-				"elapsed", common.PrettyDuration(time.Since(start)),
-				"root", mBlock.GetMetaData().Root)
+			//log.Debug(m.logInfo+" Inserted new block", "number", mBlock.NumberU64(), "hash", mBlock.Hash().TerminalString(),
+			//	"txs", len(mBlock.GetTransactions()), "gas", mBlock.GetMetaData().GasUsed.Value.Uint64(),
+			//	"elapsed", common.PrettyDuration(time.Since(start)),
+			//	"root", mBlock.GetMetaData().Root)
 
 			coalescedLogs = append(coalescedLogs, logs...)
 			events = append(events, MinorChainEvent{mBlock, mBlock.Hash(), logs})
