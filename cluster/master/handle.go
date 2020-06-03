@@ -112,7 +112,7 @@ func (pm *ProtocolManager) removePeer(id string) {
 	if peer == nil {
 		return
 	}
-	log.Debug("Removing peer", "peer", id)
+	log.Debug("Removing peer", "peer", id, "len", pm.peers.Len())
 
 	if err := pm.peers.Unregister(id); err != nil {
 		log.Error("Peer removal failed", "peer", id, "err", err)

@@ -1,9 +1,10 @@
 package nodefilter
 
 import (
-	"github.com/ethereum/go-ethereum/p2p/enode"
 	"sync"
 	"time"
+
+	"github.com/ethereum/go-ethereum/p2p/enode"
 )
 
 const (
@@ -72,14 +73,6 @@ func (pm *blackNodes) ChkDialoutBlacklist(ip string) bool {
 		pm.mu.Unlock()
 	}
 	return false
-}
-
-func (pm *blackNodes) addDialinBlacklist(ip string) {
-	if _, ok := pm.WhitelistNodes[ip]; !ok {
-		pm.mu.Lock()
-		pm.dialinBlacklist[ip] = time.Now().Unix() + dialinBlacklistCooldownSec
-		pm.mu.Unlock()
-	}
 }
 
 func (pm *blackNodes) chkDialinBlacklist(ip string) bool {
