@@ -249,8 +249,8 @@ func (s *ShardBackend) NewMinorBlock(peerId string, block *types.MinorBlock) (er
 	}
 
 	if err := s.MinorBlockChain.Validator().ValidateBlock(block, false); err != nil {
-		log.Warn(s.logInfo+" ValidateBlock", "err", err)
-		return err
+		log.Warn(s.logInfo+" ValidateBlock---------------", "err", err)
+		//return err
 	}
 
 	s.mBPool.setBlockInPool(block.Hash())
