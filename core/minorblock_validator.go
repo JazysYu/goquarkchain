@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"runtime/debug"
 	"time"
 
 	"github.com/QuarkChain/goquarkchain/account"
@@ -96,6 +97,7 @@ func (v *MinorBlockValidator) ValidateBlock(mBlock types.IBlock, force bool) err
 			return consensus.ErrUnknownAncestor
 		}
 		log.Warn(v.logInfo, "will insert side chain", ErrPrunedAncestor, "parent height", block.NumberU64()-1, "hash", block.ParentHash().String(), "currHash", block.Hash().String())
+		debug.PrintStack()
 		return ErrPrunedAncestor
 	}
 

@@ -655,9 +655,9 @@ func (bc *RootBlockChain) insertChain(chain []types.IBlock, verifySeals bool) (i
 			bc.gcproc += proctime
 
 		case SideStatTy:
-			log.Debug("Inserted forked block", "number", block.NumberU64(), "hash", block.Hash(),
-				"diff", block.IHeader().GetDifficulty(), "elapsed", common.PrettyDuration(time.Since(start)),
-				"headblock", len(block.Content()))
+			//log.Debug("Inserted forked block", "number", block.NumberU64(), "hash", block.Hash(),
+			//	"diff", block.IHeader().GetDifficulty(), "elapsed", common.PrettyDuration(time.Since(start)),
+			//	"headblock", len(block.Content()))
 			events = append(events, RootChainSideEvent{block.(*types.RootBlock)})
 		}
 		stats.processed++
