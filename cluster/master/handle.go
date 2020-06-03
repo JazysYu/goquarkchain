@@ -93,7 +93,17 @@ func NewProtocolManager(env config.ClusterConfig, rootBlockChain *core.RootBlock
 		},
 	}
 	manager.subProtocols = []p2p.Protocol{protocol}
+	manager.DisplayPeers()
 	return manager, nil
+}
+func (pm *ProtocolManager) DisplayPeers() {
+	go func() {
+		for true {
+			time.Sleep(60 * time.Second)
+			ps := pm.peers.Peers()
+			fmt.Println("display-peer ", len(ps))
+		}
+	}()
 }
 
 func (pm *ProtocolManager) removePeer(id string) {

@@ -114,17 +114,17 @@ func (p *Peer) broadcast() {
 
 		case nBlock := <-p.queuedMinorBlock:
 			if err := p.SendNewMinorBlock(nBlock.Branch, nBlock.Data); err != nil {
-				p.Log().Error("Broadcast minor block failed", "branch", nBlock.Branch, "error", err)
+				//p.Log().Error("Broadcast minor block failed", "branch", nBlock.Branch, "error", err)
 				return
 			}
-			p.Log().Trace("Broadcast minor block", "branch", nBlock.Branch)
+			//p.Log().Trace("Broadcast minor block", "branch", nBlock.Branch)
 
 		case nTip := <-p.queuedTip:
 			if err := p.SendNewTip(nTip.branch, nTip.tip); err != nil {
 				return
 			}
 			if nTip.branch != 0 {
-				p.Log().Trace("Broadcast new tip", "number", nTip.tip.RootBlockHeader.NumberU64(), "branch", nTip.branch)
+				//p.Log().Trace("Broadcast new tip", "number", nTip.tip.RootBlockHeader.NumberU64(), "branch", nTip.branch)
 			}
 
 		case <-p.term:
@@ -227,9 +227,9 @@ func (p *Peer) SendNewTip(branch uint32, tip *p2p.Tip) error {
 func (p *Peer) AsyncSendNewTip(branch uint32, tip *p2p.Tip) {
 	select {
 	case p.queuedTip <- newTip{branch: branch, tip: tip}:
-		p.Log().Debug("Add new tip to broadcast queue", "", tip.RootBlockHeader.NumberU64(), "branch", fmt.Sprintf("%x", branch))
+		//p.Log().Debug("Add new tip to broadcast queue", "", tip.RootBlockHeader.NumberU64(), "branch", fmt.Sprintf("%x", branch))
 	default:
-		p.Log().Debug("Dropping new tip", "", tip.RootBlockHeader.NumberU64(), "branch", fmt.Sprintf("%x", branch))
+		//p.Log().Debug("Dropping new tip", "", tip.RootBlockHeader.NumberU64(), "branch", fmt.Sprintf("%x", branch))
 	}
 }
 
@@ -247,9 +247,9 @@ func (p *Peer) SendNewMinorBlock(branch uint32, data []byte) error {
 func (p *Peer) AsyncSendNewMinorBlock(res *rpc.P2PRedirectRequest) {
 	select {
 	case p.queuedMinorBlock <- res:
-		p.Log().Debug("add minor block to broadcast queue", "branch", fmt.Sprintf("%x", res.Branch))
+		//p.Log().Debug("add minor block to broadcast queue", "branch", fmt.Sprintf("%x", res.Branch))
 	default:
-		p.Log().Debug("Dropping block propagation", "branch", fmt.Sprintf("%x", res.Branch))
+		//p.Log().Debug("Dropping block propagation", "branch", fmt.Sprintf("%x", res.Branch))
 	}
 }
 

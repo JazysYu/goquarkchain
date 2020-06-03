@@ -10,7 +10,6 @@ import (
 	qkcCommon "github.com/QuarkChain/goquarkchain/common"
 	"github.com/QuarkChain/goquarkchain/core/types"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
 	lru "github.com/hashicorp/golang-lru"
 )
 
@@ -60,7 +59,7 @@ func (p *PoSW) PoSWDiffAdjust(header types.IHeader, stakes *big.Int, stakePerBlo
 	if err != nil {
 		return nil, err
 	}
-	log.Debug("PoSWDiffAdjust", "blockCnt", blockCnt, "blockThreshold", blockThreshold, "coinbase", header.GetCoinbase().ToHex())
+	//log.Debug("PoSWDiffAdjust", "blockCnt", blockCnt, "blockThreshold", blockThreshold, "coinbase", header.GetCoinbase().ToHex())
 	if blockCnt < blockThreshold {
 		diff = new(big.Int).Div(diff, big.NewInt(int64(p.config.DiffDivider)))
 	}

@@ -1068,17 +1068,17 @@ func (bc *RootBlockChain) GetAdjustedDifficultyToMine(header types.IHeader) (*bi
 	if bc.posw.IsPoSWEnabled(header.GetTime(), header.NumberU64()) {
 		stakes, err := bc.getPoSWStakes(header)
 		if err != nil {
-			log.Debug("get PoSW stakes", "err", err, "coinbase", header.GetCoinbase().ToHex())
+			//log.Debug("get PoSW stakes", "err", err, "coinbase", header.GetCoinbase().ToHex())
 		}
 		poswAdjusted, err := bc.posw.PoSWDiffAdjust(header, stakes, *bc.chainConfig.Root.PoSWConfig.TotalStakePerBlock)
 		if err != nil {
-			log.Debug("PoSW diff adjust", "err", err, "coinbase", header.GetCoinbase().ToHex())
+			//log.Debug("PoSW diff adjust", "err", err, "coinbase", header.GetCoinbase().ToHex())
 		}
 		if poswAdjusted != nil && poswAdjusted.Cmp(rHeader.Difficulty) == -1 {
-			log.Debug("PoSW applied", "from", rHeader.Difficulty, "to", poswAdjusted, "coinbase", header.GetCoinbase().ToHex())
+			//log.Debug("PoSW applied", "from", rHeader.Difficulty, "to", poswAdjusted, "coinbase", header.GetCoinbase().ToHex())
 			return header.GetDifficulty(), bc.Config().Root.PoSWConfig.DiffDivider, nil
 		}
-		log.Debug("PoSW not satisfied", "stakes", stakes, "coinbase", header.GetCoinbase().ToHex())
+		//log.Debug("PoSW not satisfied", "stakes", stakes, "coinbase", header.GetCoinbase().ToHex())
 	}
 	return rHeader.GetDifficulty(), 1, nil
 }

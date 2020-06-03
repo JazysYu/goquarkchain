@@ -1,13 +1,14 @@
 package sync
 
 import (
+	"math/big"
+	"sync"
+
 	"github.com/QuarkChain/goquarkchain/core"
 	"github.com/QuarkChain/goquarkchain/core/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/log"
-	"math/big"
-	"sync"
 )
 
 // A lightweight wrapper over shard chain or root chain.
@@ -86,7 +87,7 @@ func (s *synchronizer) loop() {
 			if err := t.Run(s.blockchain); err != nil {
 				logger.Error("Running sync task failed", "error", err)
 			} else {
-				logger.Info("Done sync task", "priority", t.Priority())
+				logger.Info("Done sync task", "priority", t.Priority(), "peerID", t.PeerID())
 			}
 			s.setSyncing(false)
 		}
