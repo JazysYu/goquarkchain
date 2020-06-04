@@ -22,6 +22,7 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"net"
 	"sort"
 	"sync"
@@ -929,12 +930,14 @@ func (srv *Server) setupConn(c *conn, flags connFlag, dialDest *enode.Node) erro
 			return errors.New("dial destination doesn't have a secp256k1 public key")
 		}
 	}
+	fmt.Println("11111", c.fd.RemoteAddr())
 	// Run the encryption handshake.
 	remotePubkey, err := c.doEncHandshake(srv.PrivateKey, dialPubkey)
 	if err != nil {
 		srv.log.Trace("Failed RLPx handshake", "addr", c.fd.RemoteAddr(), "conn", c.flags, "err", err)
 		return err
 	}
+	fmt.Println("22222", c.fd.RemoteAddr())
 	if dialDest != nil {
 		// For dialed connections, check that the remote public key matches.
 		if dialPubkey.X.Cmp(remotePubkey.X) != 0 || dialPubkey.Y.Cmp(remotePubkey.Y) != 0 {
@@ -944,18 +947,21 @@ func (srv *Server) setupConn(c *conn, flags connFlag, dialDest *enode.Node) erro
 	} else {
 		c.node = nodeFromConn(remotePubkey, c.fd)
 	}
+	fmt.Println("333333", c.fd.RemoteAddr())
 	clog := srv.log.New("id", c.node.ID(), "addr", c.fd.RemoteAddr(), "conn", c.flags)
 	err = srv.checkpoint(c, srv.posthandshake)
 	if err != nil {
 		clog.Trace("Rejected peer before protocol handshake", "err", err)
 		return err
 	}
+	fmt.Println("44444", c.fd.RemoteAddr())
 	// Run the protocol handshake
 	phs, err := c.doProtoHandshake(srv.ourHandshake)
 	if err != nil {
 		clog.Trace("Failed proto handshake", "err", err)
 		return err
 	}
+	fmt.Println("5555", c.fd.RemoteAddr())
 	if id := c.node.ID(); !bytes.Equal(crypto.Keccak256(phs.ID), id[:]) {
 		clog.Trace("Wrong devp2p handshake identity", "phsid", hex.EncodeToString(phs.ID))
 		return DiscUnexpectedIdentity
@@ -966,6 +972,7 @@ func (srv *Server) setupConn(c *conn, flags connFlag, dialDest *enode.Node) erro
 		clog.Trace("Rejected peer", "err", err)
 		return err
 	}
+	fmt.Println("66666", c.fd.RemoteAddr())
 	// If the checks completed successfully, runPeer has now been
 	// launched by run.
 	clog.Trace("connection set up", "inbound", dialDest == nil)
