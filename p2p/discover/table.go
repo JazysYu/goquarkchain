@@ -246,8 +246,10 @@ func (tab *Table) Resolve(n *enode.Node) *enode.Node {
 	if len(cl.entries) > 0 && cl.entries[0].ID() == hash {
 		return unwrapNode(cl.entries[0])
 	}
+	fmt.Println("RRRR-lookup")
 	// Otherwise, do a network lookup.
 	result := tab.lookup(encodePubkey(n.Pubkey()), true)
+	fmt.Println("RRRR-lookup-end", len(result))
 	for _, n := range result {
 		if n.ID() == hash {
 			return unwrapNode(n)
@@ -260,7 +262,10 @@ func (tab *Table) Resolve(n *enode.Node) *enode.Node {
 func (tab *Table) LookupRandom() []*enode.Node {
 	var target encPubkey
 	crand.Read(target[:])
-	return unwrapNodes(tab.lookup(target, true))
+	fmt.Println("Random lookup")
+	ans := unwrapNodes(tab.lookup(target, true))
+	fmt.Println("Random lookup end", len(ans))
+	return ans
 }
 
 // lookup performs a network search for nodes close to the given target. It approaches the
@@ -391,6 +396,7 @@ loop:
 				go tab.doRefresh(refreshDone)
 			}
 		case req := <-tab.refreshReq:
+			fmt.Println("BBBBBBBBBBBBBB---rrrrrrrrrrr")
 			waiting = append(waiting, req)
 			if refreshDone == nil {
 				refreshDone = make(chan struct{})
