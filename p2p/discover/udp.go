@@ -469,7 +469,7 @@ func (t *udp) loop() {
 			for el := plist.Front(); el != nil; el = el.Next() {
 				p := el.Value.(*pending)
 				if now.After(p.deadline) || now.Equal(p.deadline) {
-					p.errc <- nil
+					p.errc <- errTimeout
 					plist.Remove(el)
 					contTimeouts++
 				}
