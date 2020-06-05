@@ -294,7 +294,7 @@ func (tab *Table) lookup(targetKey encPubkey, refreshIfEmpty bool) []*node {
 		<-tab.refresh()
 		refreshIfEmpty = false
 	}
-
+	fmt.Println("lookup go tab.findnode", len(result.entries), pendingQueries, alpha)
 	for {
 		// ask the alpha closest nodes that we haven't asked yet
 		for i := 0; i < len(result.entries) && pendingQueries < alpha; i++ {
@@ -302,6 +302,7 @@ func (tab *Table) lookup(targetKey encPubkey, refreshIfEmpty bool) []*node {
 			if !asked[n.ID()] {
 				asked[n.ID()] = true
 				pendingQueries++
+
 				go tab.findnode(n, targetKey, reply)
 			}
 		}
@@ -384,6 +385,7 @@ loop:
 		select {
 		case <-refresh.C:
 			tab.seedRand()
+			fmt.Println("BBBBBBBBBB-CCCCCCCC", refreshDone == nil)
 			if refreshDone == nil {
 				refreshDone = make(chan struct{})
 				go tab.doRefresh(refreshDone)
@@ -411,17 +413,19 @@ loop:
 			break loop
 		}
 	}
-
+	fmt.Println("BBBBBBBBBB-1")
 	if refreshDone != nil {
 		<-refreshDone
 	}
 	for _, ch := range waiting {
 		close(ch)
 	}
+	fmt.Println("BBBBBBBBBB-2")
 	if revalidateDone != nil {
 		<-revalidateDone
 	}
 	close(tab.closed)
+	fmt.Println("BBBBBBBBBB-3")
 }
 
 // doRefresh performs a lookup for a random target to keep buckets
