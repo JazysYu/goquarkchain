@@ -49,7 +49,7 @@ var (
 
 // Timeouts
 const (
-	respTimeout    = 5000 * time.Millisecond
+	respTimeout    = 500 * time.Millisecond
 	expiration     = 20 * time.Second
 	bondExpiration = 24 * time.Hour
 
@@ -469,7 +469,7 @@ func (t *udp) loop() {
 			for el := plist.Front(); el != nil; el = el.Next() {
 				p := el.Value.(*pending)
 				if now.After(p.deadline) || now.Equal(p.deadline) {
-					p.errc <- errTimeout
+					p.errc <- nil
 					plist.Remove(el)
 					contTimeouts++
 				}
