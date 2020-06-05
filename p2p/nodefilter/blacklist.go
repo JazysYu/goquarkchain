@@ -4,6 +4,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ethereum/go-ethereum/log"
+
 	"github.com/ethereum/go-ethereum/p2p/enode"
 )
 
@@ -56,6 +58,7 @@ func (pm *blackNodes) AddDialoutBlacklist(ip string) {
 	if _, ok := pm.WhitelistNodes[ip]; !ok {
 		pm.mu.Lock()
 		pm.dialoutBlacklist[ip] = time.Now().Unix() + dialoutBlacklistCooldownSec
+		log.Info("add black list", "len", len(pm.dialoutBlacklist), "ip", ip, "data", pm.dialoutBlacklist)
 		pm.mu.Unlock()
 	}
 }
