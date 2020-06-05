@@ -262,9 +262,10 @@ func (tab *Table) Resolve(n *enode.Node) *enode.Node {
 func (tab *Table) LookupRandom() []*enode.Node {
 	var target encPubkey
 	crand.Read(target[:])
-	fmt.Println("Random lookup")
+	ts := time.Now().String()
+	fmt.Println("Random lookup", ts)
 	ans := unwrapNodes(tab.lookup(target, true))
-	fmt.Println("Random lookup end", len(ans))
+	fmt.Println("Random lookup end", len(ans), ts)
 	return ans
 }
 
@@ -330,6 +331,7 @@ func (tab *Table) lookup(targetKey encPubkey, refreshIfEmpty bool) []*node {
 func (tab *Table) findnode(n *node, targetKey encPubkey, reply chan<- []*node) {
 	fails := tab.db.FindFails(n.ID())
 	r, err := tab.net.findnode(n.ID(), n.addr(), targetKey)
+	fmt.Println("findnode result", len(r), err)
 	realr := make([]*node, 0, len(r))
 	for _, nd := range r {
 		nd := nd
