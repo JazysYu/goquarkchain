@@ -653,14 +653,16 @@ func (srv *Server) run(dialstate dialer) {
 	}
 	scheduleTasks := func() {
 		// Start from queue first.
-		fmt.Println("scheduleTasks-1", len(queuedTasks))
+		fmt.Println("scheduleTasks-0", len(queuedTasks), len(runningTasks))
 		queuedTasks = append(queuedTasks[:0], startTasks(queuedTasks)...)
+		fmt.Println("scheduleTasks-1", len(queuedTasks), len(runningTasks))
 		// Query dialer for new tasks and start as many as possible now.
 		if len(runningTasks) < maxActiveDialTasks {
 			nt := dialstate.newTasks(len(runningTasks)+len(queuedTasks), peers, time.Now())
 			fmt.Println("scheduleTasks-2", len(nt))
 			queuedTasks = append(queuedTasks, startTasks(nt)...)
 		}
+		fmt.Println("scheduleTasks-3", len(runningTasks))
 	}
 
 	periodicallyUnblacklist := func() {
@@ -681,37 +683,47 @@ running:
 			// The server was stopped. Run the cleanup logic.
 			break running
 		case <-ticker.C:
+			fmt.Println("CCCCCCCCC--1")
 			scheduleTasks()
+			fmt.Println("CCCCCCCCC--2")
 			periodicallyUnblacklist()
+			fmt.Println("CCCCCCCCC-3")
 
 		case n := <-srv.addstatic:
 			// This channel is used by AddPeer to add to the
 			// ephemeral static peer list. Add it to the dialer,
 			// it will keep the node connected.
+			fmt.Println("FFFFF-1")
 			srv.log.Trace("Adding static node", "node", n)
 			dialstate.addStatic(n)
+			fmt.Println("FFFFF-1", "end")
 		case n := <-srv.removestatic:
 			// This channel is used by RemovePeer to send a
 			// disconnect request to a peer and begin the
 			// stop keeping the node connected.
 			srv.log.Trace("Removing static node", "node", n)
+			fmt.Println("FFFFF-2")
 			dialstate.removeStatic(n)
 			if p, ok := peers[n.ID()]; ok {
 				p.Disconnect(DiscRequested)
 			}
+			fmt.Println("FFFFF-2", "end")
 		case n := <-srv.addtrusted:
 			// This channel is used by AddTrustedPeer to add an enode
 			// to the trusted node set.
 			srv.log.Trace("Adding trusted node", "node", n)
+			fmt.Println("FFFFF-3")
 			trusted[n.ID()] = true
 			// Mark any already-connected peer as trusted
 			if p, ok := peers[n.ID()]; ok {
 				p.rw.set(trustedConn, true)
 			}
+			fmt.Println("FFFFF-3", "end")
 		case n := <-srv.removetrusted:
 			// This channel is used by RemoveTrustedPeer to remove an enode
 			// from the trusted node set.
 			srv.log.Trace("Removing trusted node", "node", n)
+			fmt.Println("FFFFF-4")
 			if _, ok := trusted[n.ID()]; ok {
 				delete(trusted, n.ID())
 			}
@@ -719,20 +731,26 @@ running:
 			if p, ok := peers[n.ID()]; ok {
 				p.rw.set(trustedConn, false)
 			}
+			fmt.Println("FFFFF-4", "end")
 		case op := <-srv.peerOp:
 			// This channel is used by Peers and PeerCount.
+			fmt.Println("FFFFF-5")
 			op(peers)
 			srv.peerOpDone <- struct{}{}
+			fmt.Println("FFFFF-5", "end")
 		case t := <-taskdone:
 			// A task got done. Tell dialstate about it so it
 			// can update its state and remove it from the active
 			// tasks list.
 			srv.log.Trace("Dial task done", "task", t)
+			fmt.Println("FFFFF-6")
 			dialstate.taskDone(t, time.Now())
 			delTask(t)
+			fmt.Println("FFFFF-6", "end")
 		case c := <-srv.posthandshake:
 			// A connection has passed the encryption handshake so
 			// the remote identity is known (but hasn't been verified yet).
+			fmt.Println("FFFFF-7")
 			if trusted[c.node.ID()] {
 				// Ensure that the trusted flag is set before checking against MaxPeers.
 				c.flags |= trustedConn
@@ -743,9 +761,11 @@ running:
 			case <-srv.quit:
 				break running
 			}
+			fmt.Println("FFFFF-7", "end")
 		case c := <-srv.addpeer:
 			// At this point the connection is past the protocol handshake.
 			// Its capabilities are known and the remote identity is verified.
+			fmt.Println("FFFFF-8")
 			err := srv.protoHandshakeChecks(peers, inboundCount, c)
 			if err == nil && !srv.blackNodeFilter.ChkDialoutBlacklist(c.node.IP().String()) {
 				// The handshakes are done and it passed all checks.
@@ -771,7 +791,9 @@ running:
 			case <-srv.quit:
 				break running
 			}
+			fmt.Println("FFFFF-8", "end")
 		case pd := <-srv.delpeer:
+			fmt.Println("FFFFF-9")
 			// A peer disconnected.
 			switch (pd.err).(type) {
 			case *nodefilter.BlackErr:
@@ -784,6 +806,7 @@ running:
 			if pd.Inbound() {
 				inboundCount--
 			}
+			fmt.Println("FFFFF-9", "end")
 		}
 	}
 
