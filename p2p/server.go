@@ -658,6 +658,7 @@ func (srv *Server) run(dialstate dialer) {
 		fmt.Println("scheduleTasks-1", len(queuedTasks), len(runningTasks))
 		// Query dialer for new tasks and start as many as possible now.
 		if len(runningTasks) < maxActiveDialTasks {
+			fmt.Println("scheduleTasks-2.5")
 			nt := dialstate.newTasks(len(runningTasks)+len(queuedTasks), peers, time.Now())
 			fmt.Println("scheduleTasks-2", len(nt))
 			queuedTasks = append(queuedTasks, startTasks(nt)...)
