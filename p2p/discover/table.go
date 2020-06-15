@@ -160,12 +160,13 @@ func (tab *Table) SetChkBlackListFunc(chkDialOutFunc func(string) bool) {
 // ReadRandomNodes fills the given slice with random nodes from the table. The results
 // are guaranteed to be unique for a single invocation, no node will appear twice.
 func (tab *Table) ReadRandomNodes(buf []*enode.Node) (n int) {
+	fmt.Println("EEEEEEEE-1")
 	if !tab.isInitDone() {
 		return 0
 	}
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
-
+	fmt.Println("EEEEEEEE-2")
 	// Find all non-empty buckets and get a fresh slice of their entries.
 	var buckets [][]*node
 	for _, b := range &tab.buckets {
@@ -173,17 +174,21 @@ func (tab *Table) ReadRandomNodes(buf []*enode.Node) (n int) {
 			buckets = append(buckets, b.entries)
 		}
 	}
+	fmt.Println("EEEEEEEE-3")
 	if len(buckets) == 0 {
 		return 0
 	}
+	fmt.Println("EEEEEEEE-4")
 	// Shuffle the buckets.
 	for i := len(buckets) - 1; i > 0; i-- {
 		j := tab.rand.Intn(len(buckets))
 		buckets[i], buckets[j] = buckets[j], buckets[i]
 	}
+	fmt.Println("EEEEEEEE-5")
 	// Move head of each bucket into buf, removing buckets that become empty.
 	var i, j int
 	for ; i < len(buf); i, j = i+1, (j+1)%len(buckets) {
+		fmt.Println("EEEEEEEE-6")
 		b := buckets[j]
 		buf[i] = unwrapNode(b[0])
 		buckets[j] = b[1:]
@@ -194,6 +199,7 @@ func (tab *Table) ReadRandomNodes(buf []*enode.Node) (n int) {
 			break
 		}
 	}
+	fmt.Println("EEEEEEEE-7")
 	return i + 1
 }
 
