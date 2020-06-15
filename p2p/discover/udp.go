@@ -691,9 +691,11 @@ func (req *findnode) handle(t *udp, from *net.UDPAddr, fromKey encPubkey, mac []
 		return errUnknownNode
 	}
 	target := enode.ID(crypto.Keccak256Hash(req.Target[:]))
+	fmt.Println("UUU-12", "lock")
 	t.tab.mutex.Lock()
 	closest := t.tab.closest(target, bucketSize).entries
 	t.tab.mutex.Unlock()
+	fmt.Println("UUU-12", "unlock")
 
 	p := neighbors{Expiration: uint64(time.Now().Add(expiration).Unix())}
 	var sent bool

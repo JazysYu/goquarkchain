@@ -139,10 +139,11 @@ func (tab *Table) self() *enode.Node {
 func (tab *Table) seedRand() {
 	var b [8]byte
 	crand.Read(b[:])
-
+	fmt.Println("UUU-1", "lock")
 	tab.mutex.Lock()
 	tab.rand.Seed(int64(binary.BigEndian.Uint64(b[:])))
 	tab.mutex.Unlock()
+	fmt.Println("UUU-1", "unlock")
 }
 
 func (tab *Table) GetKadRoutingTable() []string {
@@ -150,11 +151,13 @@ func (tab *Table) GetKadRoutingTable() []string {
 }
 
 func (tab *Table) SetChkBlackListFunc(chkDialOutFunc func(string) bool) {
+	fmt.Println("UUU-2", "lock")
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
 	if chkDialOutFunc != nil {
 		tab.checkDialBlackList = chkDialOutFunc
 	}
+	defer fmt.Println("UUU-2", "unlock")
 }
 
 // ReadRandomNodes fills the given slice with random nodes from the table. The results
@@ -251,9 +254,11 @@ func (tab *Table) Resolve(n *enode.Node) *enode.Node {
 	// If the node is present in the local table, no
 	// network interaction is required.
 	hash := n.ID()
+	fmt.Println("UUU-3", "lock")
 	tab.mutex.Lock()
 	cl := tab.closest(hash, 1)
 	tab.mutex.Unlock()
+	fmt.Println("UUU-3", "unlock")
 	if len(cl.entries) > 0 && cl.entries[0].ID() == hash {
 		return unwrapNode(cl.entries[0])
 	}
@@ -297,10 +302,12 @@ func (tab *Table) lookup(targetKey encPubkey, refreshIfEmpty bool) []*node {
 	asked[tab.self().ID()] = true
 
 	for {
+		fmt.Println("UUU-4", "lock")
 		tab.mutex.Lock()
 		// generate initial result set
 		result = tab.closest(target, bucketSize)
 		tab.mutex.Unlock()
+		fmt.Println("UUU-4", "unlock")
 		if len(result.entries) > 0 || !refreshIfEmpty {
 			break
 		}
@@ -501,12 +508,14 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 	}
 
 	inBlackList := false
+	fmt.Println("UUU-5", "lock")
 	tab.mutex.Lock()
 	if tab.checkDialBlackList(last.IP().String()) {
 		log.Warn("black node", "b", bi, "id", last.ID(), "address", last.addr().String())
 		inBlackList = true
 	}
 	defer tab.mutex.Unlock()
+	defer fmt.Println("UUU-5", "unlock")
 
 	b := tab.buckets[bi]
 	if !inBlackList {
@@ -530,9 +539,10 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 
 // nodeToRevalidate returns the last node in a random, non-empty bucket.
 func (tab *Table) nodeToRevalidate() (n *node, bi int) {
+	fmt.Println("UUU-6", "lock")
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
-
+	defer fmt.Println("UUU-6", "unlock")
 	for _, bi = range tab.rand.Perm(len(tab.buckets)) {
 		b := tab.buckets[bi]
 		if len(b.entries) > 0 {
@@ -544,17 +554,20 @@ func (tab *Table) nodeToRevalidate() (n *node, bi int) {
 }
 
 func (tab *Table) nextRevalidateTime() time.Duration {
+	fmt.Println("UUU-7", "lock")
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
-
+	defer fmt.Println("UUU-7", "unlock")
 	return time.Duration(tab.rand.Int63n(int64(revalidateInterval)))
 }
 
 // copyLiveNodes adds nodes from the table to the database if they have been in the table
 // longer then minTableTime.
 func (tab *Table) copyLiveNodes() {
+	fmt.Println("UUU-8", "lock")
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
+	defer fmt.Println("UUU-8", "unlock")
 
 	nodes := make(map[enode.ID]*node)
 	for _, n := range tab.db.QuerySeeds(seedCount, seedMaxAge) {
@@ -618,9 +631,10 @@ func (tab *Table) add(n *node) {
 	if n.ID() == tab.self().ID() {
 		return
 	}
-
+	fmt.Println("UUU-9", "lock")
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
+	defer fmt.Println("UUU-9", "unlock")
 	b := tab.bucket(n.ID())
 	if !tab.bumpOrAdd(b, n) {
 		// Node is not in table. Add it to the replacement list.
@@ -644,8 +658,10 @@ func (tab *Table) addThroughPing(n *node) {
 // stuff adds nodes the table to the end of their corresponding bucket
 // if the bucket is not full. The caller must not hold tab.mutex.
 func (tab *Table) stuff(nodes []*node) {
+	fmt.Println("UUU-10", "lock")
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
+	defer fmt.Println("UUU-10", "unlock")
 
 	for _, n := range nodes {
 		if n.ID() == tab.self().ID() {
@@ -660,8 +676,10 @@ func (tab *Table) stuff(nodes []*node) {
 
 // delete removes an entry from the node table. It is used to evacuate dead nodes.
 func (tab *Table) delete(node *node) {
+	fmt.Println("UUU-11", "lock")
 	tab.mutex.Lock()
 	defer tab.mutex.Unlock()
+	defer fmt.Println("UUU-11", "unlock")
 
 	tab.deleteInBucket(tab.bucket(node.ID()), node)
 }
