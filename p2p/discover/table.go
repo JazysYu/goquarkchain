@@ -510,31 +510,38 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 	inBlackList := false
 	fmt.Println("UUU-5", "lock")
 	tab.mutex.Lock()
+	fmt.Println("UUU-5", "lock-11111")
 	if tab.checkDialBlackList(last.IP().String()) {
 		log.Warn("black node", "b", bi, "id", last.ID(), "address", last.addr().String())
 		inBlackList = true
 	}
 	defer tab.mutex.Unlock()
 	defer fmt.Println("UUU-5", "unlock")
-
+	fmt.Println("UUU-5", "1111")
 	b := tab.buckets[bi]
 	if !inBlackList {
+		fmt.Println("UUU-5", "1111222")
 		// Ping the selected node and wait for a pong.
 		err := tab.net.ping(last.ID(), last.addr())
 		if err == nil {
 			// The node responded, move it to the front.
 			log.Debug("Revalidated node", "b", bi, "id", last.ID())
 			b.bump(last)
+			fmt.Println("UUU-5", "1111333")
 			return
 		}
 	}
+	fmt.Println("UUU-5", "11114444")
 	// No reply received, pick a replacement or delete the node if there aren't
 	// any replacements.
 	if r := tab.replace(b, last); r != nil {
+		fmt.Println("UUU-5", "555")
 		log.Debug("Replaced dead node", "b", bi, "id", last.ID(), "ip", last.IP(), "r", r.ID(), "rip", r.IP())
 	} else {
+		fmt.Println("UUU-5", "666")
 		log.Debug("Removed dead node", "b", bi, "id", last.ID(), "ip", last.IP())
 	}
+	fmt.Println("UUU-5", "11117777")
 }
 
 // nodeToRevalidate returns the last node in a random, non-empty bucket.

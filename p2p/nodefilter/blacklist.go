@@ -1,6 +1,7 @@
 package nodefilter
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -56,39 +57,54 @@ func NewBlackList(whitelistNodes map[string]*enode.Node) BlackFilter {
 
 func (pm *blackNodes) AddDialoutBlacklist(ip string) {
 	if _, ok := pm.WhitelistNodes[ip]; !ok {
+		fmt.Println("BBB4--", "RLock")
 		pm.mu.Lock()
 		pm.dialoutBlacklist[ip] = time.Now().Unix() + dialoutBlacklistCooldownSec
 		log.Info("add black list", "len", len(pm.dialoutBlacklist), "ip", ip, "data", pm.dialoutBlacklist)
 		pm.mu.Unlock()
+		fmt.Println("BBB4--", "RLock")
 	}
 }
 
 func (pm *blackNodes) ChkDialoutBlacklist(ip string) bool {
+	fmt.Println("BBB--1111", "RLock")
 	pm.mu.RLock()
+	fmt.Println("BBB--2222")
 	tm, ok := pm.dialoutBlacklist[ip]
+	fmt.Println("BBB--333")
 	pm.mu.RUnlock()
+	fmt.Println("BBB--4444", "RUnLock")
 	if ok {
 		if time.Now().Unix() < tm {
+			fmt.Println("BBB--555")
 			return true
 		}
+		fmt.Println("BBB--666", "Lock")
 		pm.mu.Lock()
+		fmt.Println("BBB--7777")
 		delete(pm.dialoutBlacklist, ip)
+		fmt.Println("BBB--8888")
 		pm.mu.Unlock()
+		fmt.Println("BBB--9999", "UnLock")
 	}
 	return false
 }
 
 func (pm *blackNodes) chkDialinBlacklist(ip string) bool {
+	fmt.Println("BBB1--", "RLock")
 	pm.mu.RLock()
 	tm, ok := pm.dialinBlacklist[ip]
 	pm.mu.RUnlock()
+	fmt.Println("BBB1-", "RLock")
 	if ok {
 		if time.Now().Unix() < tm {
 			return true
 		}
+		fmt.Println("BBB2--", "RLock")
 		pm.mu.Lock()
 		delete(pm.dialinBlacklist, ip)
 		pm.mu.Unlock()
+		fmt.Println("BBB2--", "RLock")
 	}
 	return false
 }
@@ -98,9 +114,10 @@ func (b *blackNodes) PeriodicallyUnblacklist() {
 	if now.Sub(b.currTime) < unblacklistInterval {
 		return
 	}
-
+	fmt.Println("BBB3--", "RLock")
 	b.mu.Lock()
 	defer b.mu.Unlock()
+	defer fmt.Println("BBB3--", "RLock")
 	b.currTime = now
 	for ip, tm := range b.dialoutBlacklist {
 		if now.Unix() >= tm {
