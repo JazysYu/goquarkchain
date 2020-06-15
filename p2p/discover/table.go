@@ -508,9 +508,8 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 	}
 
 	inBlackList := false
-	fmt.Println("UUU-5", "lock")
 	tab.mutex.Lock()
-	fmt.Println("UUU-5", "lock-11111")
+	fmt.Println("UUU-5", "lock")
 	if tab.checkDialBlackList(last.IP().String()) {
 		log.Warn("black node", "b", bi, "id", last.ID(), "address", last.addr().String())
 		inBlackList = true
@@ -638,15 +637,19 @@ func (tab *Table) add(n *node) {
 	if n.ID() == tab.self().ID() {
 		return
 	}
-	fmt.Println("UUU-9", "lock")
 	tab.mutex.Lock()
+	fmt.Println("UUU-9", "lock")
 	defer tab.mutex.Unlock()
 	defer fmt.Println("UUU-9", "unlock")
 	b := tab.bucket(n.ID())
+	fmt.Println("UUU-9", "lock-1")
 	if !tab.bumpOrAdd(b, n) {
+		fmt.Println("UUU-9", "lock-2")
 		// Node is not in table. Add it to the replacement list.
 		tab.addReplacement(b, n)
+		fmt.Println("UUU-9", "lock-3")
 	}
+	fmt.Println("UUU-9", "lock-4")
 }
 
 // addThroughPing adds the given node to the table. Compared to plain
