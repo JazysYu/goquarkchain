@@ -232,7 +232,7 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 	if randomCandidates > 0 {
 		fmt.Println("DDDDDDDD-13")
 		n := s.ntab.ReadRandomNodes(s.randomNodes)
-		fmt.Println("DDDDDDDD-13.5")
+		fmt.Println("DDDDDDDD-13.5", n)
 		for i := 0; i < randomCandidates && i < n; i++ {
 			fmt.Println("DDDDDDDD-13.6")
 			if addDial(dynDialedConn, s.randomNodes[i]) {
