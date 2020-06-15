@@ -162,9 +162,12 @@ func (tab *Table) SetChkBlackListFunc(chkDialOutFunc func(string) bool) {
 func (tab *Table) ReadRandomNodes(buf []*enode.Node) (n int) {
 	fmt.Println("EEEEEEEE-1")
 	if !tab.isInitDone() {
+		fmt.Println("EEEEEEEE-1.5")
 		return 0
 	}
+	fmt.Println("EEEEEEEE-1.6")
 	tab.mutex.Lock()
+	fmt.Println("EEEEEEEE-1.7")
 	defer tab.mutex.Unlock()
 	fmt.Println("EEEEEEEE-2")
 	// Find all non-empty buckets and get a fresh slice of their entries.
@@ -232,6 +235,8 @@ func (tab *Table) setFallbackNodes(nodes []*enode.Node) error {
 
 // isInitDone returns whether the table's initial seeding procedure has completed.
 func (tab *Table) isInitDone() bool {
+	fmt.Println("QQQQQ-1")
+	defer fmt.Println("QQQQQQQQQQ-2")
 	select {
 	case <-tab.initDone:
 		return true
