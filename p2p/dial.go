@@ -180,7 +180,6 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 		return true
 	}
 
-	fmt.Println("DDDDDDDD-5")
 	// Compute number of dynamic dials necessary at this point.
 	needDynDials := s.maxDynDials
 	for _, p := range peers {
@@ -188,16 +187,16 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 			needDynDials--
 		}
 	}
-	fmt.Println("DDDDDDDD-6")
+
 	for _, flag := range s.dialing {
 		if flag&dynDialedConn != 0 {
 			needDynDials--
 		}
 	}
-	fmt.Println("DDDDDDDD-7")
+
 	// Expire the dial history on every invocation.
 	s.hist.expire(now)
-	fmt.Println("DDDDDDDD-8")
+
 	// Create dials for static nodes if they are not connected.
 	for id, t := range s.static {
 		fmt.Println("DDDDDDDD-9")
@@ -251,20 +250,19 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 			needDynDials--
 		}
 	}
-	fmt.Println("DDDDDDDD-16")
+
 	s.lookupBuf = s.lookupBuf[:copy(s.lookupBuf, s.lookupBuf[i:])]
 	// Launch a discovery lookup if more candidates are needed.
 	if len(s.lookupBuf) < needDynDials && !s.lookupRunning {
 		s.lookupRunning = true
 		newtasks = append(newtasks, &discoverTask{})
 	}
-	fmt.Println("DDDDDDDD-17")
+
 	// Launch a timer to wait for the next node to expire if all
 	// candidates have been tried and no task is currently active.
 	// This should prevent cases where the dialer logic is not ticked
 	// because there are no pending events.
 	if nRunning == 0 && len(newtasks) == 0 && s.hist.Len() > 0 {
-		fmt.Println("DDDDDDDD-18")
 		t := &waitExpireTask{s.hist.min().exp.Sub(now)}
 		newtasks = append(newtasks, t)
 	}
