@@ -165,7 +165,7 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 	if s.start.IsZero() {
 		s.start = now
 	}
-	fmt.Println("DDDDDDDD-1")
+	//fmt.Println("DDDDDDDD-1")
 	var newtasks []task
 	addDial := func(flag connFlag, n *enode.Node) bool {
 		//fmt.Println("DDDDDDDD-2")

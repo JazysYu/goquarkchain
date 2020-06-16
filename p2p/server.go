@@ -658,7 +658,7 @@ func (srv *Server) run(dialstate dialer) {
 		//fmt.Println("sc/heduleTasks-1", len(queuedTasks), len(runningTasks))
 		// Query dialer for new tasks and start as many as possible now.
 		if len(runningTasks) < maxActiveDialTasks {
-			fmt.Println("scheduleTasks-2.5")
+			//fmt.Println("scheduleTasks-2.5")
 			nt := dialstate.newTasks(len(runningTasks)+len(queuedTasks), peers, time.Now())
 			//fmt.Println("scheduleTasks-2", len(nt))
 			queuedTasks = append(queuedTasks, startTasks(nt)...)
@@ -684,7 +684,7 @@ running:
 			// The server was stopped. Run the cleanup logic.
 			break running
 		case <-ticker.C:
-			fmt.Println("CCCCCCCCC--1")
+			//fmt.Println("CCCCCCCCC--1")
 			scheduleTasks()
 			//fmt.Println("CCCCCCCCC--2")
 			periodicallyUnblacklist()
