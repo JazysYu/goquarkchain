@@ -437,21 +437,25 @@ func (t *udp) loop() {
 	}
 
 	for {
+		fmt.Println("resetTimeout", "start")
 		resetTimeout()
-
+		fmt.Println("resetTimeout", "end")
 		select {
 		case <-t.closing:
+			fmt.Println("yyyyy-1", "closing", "start")
 			for el := plist.Front(); el != nil; el = el.Next() {
 				el.Value.(*pending).errc <- errClosed
 			}
+			fmt.Println("yyyyy-1", "closing", "end")
 			return
 
 		case p := <-t.addpending:
 			p.deadline = time.Now().Add(respTimeout)
-			fmt.Println("addppp", p.ptype, p.from, p.callback, p.deadline.String())
 			plist.PushBack(p)
+			fmt.Println("addppp", p.ptype, p.from, p.callback, p.deadline.String())
 
 		case r := <-t.gotreply:
+			fmt.Println("yyyyy-1", "gotreply", "start")
 			var matched bool
 			for el := plist.Front(); el != nil; el = el.Next() {
 				p := el.Value.(*pending)
@@ -470,8 +474,10 @@ func (t *udp) loop() {
 				}
 			}
 			r.matched <- matched
+			fmt.Println("yyyyy-1", "gotreply", "emd")
 
 		case now := <-timeout.C:
+			fmt.Println("yyyyy-1", "timeout", "start")
 			nextTimeout = nil
 
 			// Notify and remove callbacks whose deadline is in the past.
@@ -492,6 +498,7 @@ func (t *udp) loop() {
 				}
 				contTimeouts = 0
 			}
+			fmt.Println("yyyyy-1", "timeout", "emd")
 		}
 	}
 }
