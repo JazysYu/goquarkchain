@@ -345,6 +345,8 @@ func (s *ShardBackend) AddMinorBlock(block *types.MinorBlock) error {
 // and will add them once this function returns successfully.
 
 func (s *ShardBackend) AddBlockListForSync(blockLst []*types.MinorBlock) error {
+	fmt.Println("3488888", len(blockLst), s.branch)
+	defer fmt.Println("3488888", len(blockLst), s.branch)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.wg.Add(1)
