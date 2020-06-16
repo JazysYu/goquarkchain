@@ -425,7 +425,7 @@ func (t *udp) loop() {
 		for el := plist.Front(); el != nil; el = el.Next() {
 			nextTimeout = el.Value.(*pending)
 			if dist := nextTimeout.deadline.Sub(now); dist < 2*respTimeout {
-				fmt.Println("RRRRRRRRRRRRRRRRRRRRRR", now.Unix(), dist.Milliseconds(), now.Add(dist).Unix())
+				fmt.Println("RRRRRRRRRRRRRRRRRRRRRR", now.Unix(), now.Add(dist).Unix())
 				timeout.Reset(dist)
 				return
 			}
