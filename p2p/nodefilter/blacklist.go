@@ -1,7 +1,6 @@
 package nodefilter
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -58,48 +57,48 @@ func NewBlackList(whitelistNodes map[string]*enode.Node) BlackFilter {
 func (pm *blackNodes) AddDialoutBlacklist(ip string) {
 	if _, ok := pm.WhitelistNodes[ip]; !ok {
 		pm.mu.Lock()
-		fmt.Println("BBB4--", "RLock")
+		//fmt.Println("BBB4--", "RLock")
 		pm.dialoutBlacklist[ip] = time.Now().Unix() + dialoutBlacklistCooldownSec
 		log.Info("add black list", "len", len(pm.dialoutBlacklist), "ip", ip, "data", pm.dialoutBlacklist)
 		pm.mu.Unlock()
-		fmt.Println("BBB4--", "RLock")
+		//fmt.Println("BBB4--", "RLock")
 	}
 }
 
 func (pm *blackNodes) ChkDialoutBlacklist(ip string) bool {
 	pm.mu.RLock()
-	fmt.Println("BBB--2222", "RLock")
+	//fmt.Println("BBB--2222", "RLock")
 	tm, ok := pm.dialoutBlacklist[ip]
 	pm.mu.RUnlock()
-	fmt.Println("BBB--4444", "RUnLock")
+	//fmt.Println("BBB--4444", "RUnLock")
 	if ok {
 		if time.Now().Unix() < tm {
 			return true
 		}
 		pm.mu.Lock()
-		fmt.Println("BBB--666", "Lock")
+		//fmt.Println("BBB--666", "Lock")
 		delete(pm.dialoutBlacklist, ip)
 		pm.mu.Unlock()
-		fmt.Println("BBB--9999", "UnLock")
+		//fmt.Println("BBB--9999", "UnLock")
 	}
 	return false
 }
 
 func (pm *blackNodes) chkDialinBlacklist(ip string) bool {
 	pm.mu.RLock()
-	fmt.Println("BBB1--", "RLock")
+	//fmt.Println("BBB1--", "RLock")
 	tm, ok := pm.dialinBlacklist[ip]
 	pm.mu.RUnlock()
-	fmt.Println("BBB1-", "RLock")
+	//fmt.Println("BBB1-", "RLock")
 	if ok {
 		if time.Now().Unix() < tm {
 			return true
 		}
 		pm.mu.Lock()
-		fmt.Println("BBB2--", "RLock")
+		//fmt.Println("BBB2--", "RLock")
 		delete(pm.dialinBlacklist, ip)
 		pm.mu.Unlock()
-		fmt.Println("BBB2--", "RLock")
+		//fmt.Println("BBB2--", "RLock")
 	}
 	return false
 }
@@ -110,9 +109,9 @@ func (b *blackNodes) PeriodicallyUnblacklist() {
 		return
 	}
 	b.mu.Lock()
-	fmt.Println("BBB3--", "Lock")
+	//fmt.Println("BBB3--", "Lock")
 	defer b.mu.Unlock()
-	defer fmt.Println("BBB3--", "Unlock")
+	//defer fmt.Println("BBB3--", "Unlock")
 	b.currTime = now
 	for ip, tm := range b.dialoutBlacklist {
 		if now.Unix() >= tm {
