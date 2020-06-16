@@ -325,7 +325,9 @@ func (t *udp) sendPing(toid enode.ID, toaddr *net.UDPAddr, callback func()) <-ch
 		ok := bytes.Equal(p.(*pong).ReplyTok, hash)
 		fmt.Println("SSSSS-3.5", toaddr.String(), "ping", ok, callback != nil)
 		if ok && callback != nil {
+			fmt.Println("328")
 			callback()
+			fmt.Println("329")
 		}
 		fmt.Println("SSSSS-4.", toaddr.String(), "ping")
 		return ok
