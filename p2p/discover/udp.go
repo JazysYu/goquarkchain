@@ -323,6 +323,7 @@ func (t *udp) sendPing(toid enode.ID, toaddr *net.UDPAddr, callback func()) <-ch
 	errc := t.pending(toid, pongPacket, func(p interface{}) bool {
 		fmt.Println("SSSSS-3", toaddr.String(), "ping")
 		ok := bytes.Equal(p.(*pong).ReplyTok, hash)
+		fmt.Println("SSSSS-3.5", toaddr.String(), "ping", ok, callback != nil)
 		if ok && callback != nil {
 			callback()
 		}
@@ -466,19 +467,23 @@ func (t *udp) loop() {
 				p := el.Value.(*pending)
 				fmt.Println("dd", p.from.String(), p.ptype)
 				if p.from == r.from && p.ptype == r.ptype {
+					fmt.Println("dd-1", p.from.String(), p.ptype)
 					matched = true
 					// Remove the matcher if its callback indicates
 					// that all replies have been received. This is
 					// required for packet types that expect multiple
 					// reply packets.
 					if p.callback(r.data) {
+						fmt.Println("dd-2", p.from.String(), p.ptype)
 						p.errc <- nil
 						plist.Remove(el)
 					}
 					// Reset the continuous timeout counter (time drift detection)
 					contTimeouts = 0
+					fmt.Println("dd-3", p.from.String(), p.ptype)
 				}
 			}
+			fmt.Println("dd-4", matched)
 			r.matched <- matched
 			fmt.Println("yyyyy-1", "gotreply", "emd", matched)
 

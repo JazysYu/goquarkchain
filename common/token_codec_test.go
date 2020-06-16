@@ -4,23 +4,28 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestTokenCharEncode(t *testing.T) {
-	EncodedValues := make(map[string]uint64)
-	EncodedValues["0"] = 0
-	EncodedValues["Z"] = 35
-	EncodedValues["00"] = 36
-	EncodedValues["0Z"] = 71
-	EncodedValues["1Z"] = 107
-	EncodedValues["20"] = 108
-	EncodedValues["ZZ"] = 1331
-	EncodedValues["QKC"] = 35760
-	EncodedValues[TOKENMAX] = TOKENIDMAX
+	cnt := 0
+	timeout := time.NewTimer(0)
+	<-timeout.C // ignore first timeout
+	defer timeout.Stop()
+	resetTimeout := func() {
+		timeout.Reset(1 * time.Second)
+		if cnt >= 3 {
+			time.Sleep(5 * time.Second)
+		}
+	}
 
-	for key, value := range EncodedValues {
-		if value != TokenIDEncode(key) {
-			t.Fatalf("key:%v should: %v is %v", key, value, TokenIDEncode(key))
+	for {
+		cnt++
+		resetTimeout()
+		select {
+		case now := <-timeout.C:
+			fmt.Println("nnnn", now.Unix(), time.Now().Unix())
+
 		}
 	}
 }
