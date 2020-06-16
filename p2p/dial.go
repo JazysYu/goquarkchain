@@ -168,12 +168,12 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 	fmt.Println("DDDDDDDD-1")
 	var newtasks []task
 	addDial := func(flag connFlag, n *enode.Node) bool {
-		fmt.Println("DDDDDDDD-2")
+		//fmt.Println("DDDDDDDD-2")
 		if err := s.checkDial(n, peers); err != nil {
 			log.Trace("Skipping dial candidate", "id", n.ID(), "addr", &net.TCPAddr{IP: n.IP(), Port: n.TCP()}, "err", err)
 			return false
 		}
-		fmt.Println("DDDDDDDD-3")
+		//fmt.Println("DDDDDDDD-3")
 		s.dialing[n.ID()] = flag
 		newtasks = append(newtasks, &dialTask{flags: flag, dest: n})
 		fmt.Println("DDDDDDDD-4")
