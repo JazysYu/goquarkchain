@@ -330,7 +330,7 @@ func (t *udp) sendPing(toid enode.ID, toaddr *net.UDPAddr, callback func()) <-ch
 		return ok
 	})
 	t.localNode.UDPContact(toaddr)
-	fmt.Println("SSSSS-5")
+	fmt.Println("SSSSS-5", toaddr.String(), "ping")
 	t.write(toaddr, req.name(), packet)
 	fmt.Println("SSSSS-6")
 	return errc
@@ -577,6 +577,7 @@ func (t *udp) readLoop(filter nodefilter.BlackFilter) {
 	buf := make([]byte, 1280)
 	for {
 		nbytes, from, err := t.conn.ReadFromUDP(buf)
+		fmt.Println("read udp", from.String())
 		if netutil.IsTemporaryError(err) {
 			// Ignore temporary read errors.
 			log.Debug("Temporary UDP read error", "err", err)
@@ -590,6 +591,7 @@ func (t *udp) readLoop(filter nodefilter.BlackFilter) {
 			log.Warn("black node in discovery connection", "remote ip", from.IP.String())
 			continue
 		}
+		fmt.Println("handle packer", from.String())
 		err = t.handlePacket(from, buf[:nbytes])
 		if err == errDontMatchPreFix {
 			filter.AddDialoutBlacklist(from.IP.String())
