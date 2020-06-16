@@ -345,8 +345,6 @@ func (s *ShardBackend) AddMinorBlock(block *types.MinorBlock) error {
 // and will add them once this function returns successfully.
 
 func (s *ShardBackend) AddBlockListForSync(blockLst []*types.MinorBlock) error {
-	fmt.Println("3488888", len(blockLst), s.branch)
-	defer fmt.Println("3488888", len(blockLst), s.branch)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.wg.Add(1)
@@ -365,13 +363,11 @@ func (s *ShardBackend) AddBlockListForSync(blockLst []*types.MinorBlock) error {
 		if block.Branch().Value != s.branch.Value {
 			continue
 		}
-		//if s.getBlockCommitStatusByHash(blockHash) == BLOCK_COMMITTED {
-		//	continue
-		//}
+		if s.getBlockCommitStatusByHash(blockHash) == BLOCK_COMMITTED {
+			continue
+		}
 		//TODO:support BLOCK_COMMITTING
-		fmt.Println("----i", block.Branch().Value, block.NumberU64())
 		_, xshardLst, err := s.MinorBlockChain.InsertChainForDeposits([]types.IBlock{block}, false)
-		fmt.Println("----i-end", block.Branch().Value, block.NumberU64(), err)
 		if err != nil {
 			log.Error(s.logInfo+" Failed to add minor block", "err", err)
 			return err

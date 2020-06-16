@@ -318,7 +318,7 @@ func (tab *Table) lookup(targetKey encPubkey, refreshIfEmpty bool) []*node {
 		<-tab.refresh()
 		refreshIfEmpty = false
 	}
-	fmt.Println("lookup go tab.findnode", len(result.entries), pendingQueries, alpha)
+
 	for {
 		// ask the alpha closest nodes that we haven't asked yet
 		for i := 0; i < len(result.entries) && pendingQueries < alpha; i++ {
@@ -326,7 +326,6 @@ func (tab *Table) lookup(targetKey encPubkey, refreshIfEmpty bool) []*node {
 			if !asked[n.ID()] {
 				asked[n.ID()] = true
 				pendingQueries++
-
 				go tab.findnode(n, targetKey, reply)
 			}
 		}
@@ -349,7 +348,6 @@ func (tab *Table) lookup(targetKey encPubkey, refreshIfEmpty bool) []*node {
 func (tab *Table) findnode(n *node, targetKey encPubkey, reply chan<- []*node) {
 	fails := tab.db.FindFails(n.ID())
 	r, err := tab.net.findnode(n.ID(), n.addr(), targetKey)
-	fmt.Println("findnode result", len(r), err)
 	realr := make([]*node, 0, len(r))
 	for _, nd := range r {
 		nd := nd
@@ -637,6 +635,7 @@ func (tab *Table) add(n *node) {
 	if n.ID() == tab.self().ID() {
 		return
 	}
+
 	tab.mutex.Lock()
 	fmt.Println("UUU-9", "lock")
 	defer tab.mutex.Unlock()

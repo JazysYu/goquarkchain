@@ -91,8 +91,6 @@ func (s *SlaveBackend) CreateShards(rootBlock *types.RootBlock, forceInit bool) 
 }
 
 func (s *SlaveBackend) AddBlockListForSync(mHashList []common.Hash, peerId string, branch uint32) (*rpc.ShardStatus, error) {
-	fmt.Println("AddBlockListForSync", branch)
-	defer fmt.Println("AddBlockListForSync", "end", branch)
 	shard, ok := s.shards[branch]
 	if !ok {
 		return nil, ErrMsg("AddBlockListForSync")
@@ -100,11 +98,9 @@ func (s *SlaveBackend) AddBlockListForSync(mHashList []common.Hash, peerId strin
 
 	hashList := make([]common.Hash, 0, len(mHashList))
 	for _, hash := range mHashList {
-		//if !shard.MinorBlockChain.HasBlock(hash) {
-		hashList = append(hashList, hash)
-		//} else {
-		//	fmt.Println("HHHHHHHHHHHHHHH", hash.String())
-		//}
+		if !shard.MinorBlockChain.HasBlock(hash) {
+			hashList = append(hashList, hash)
+		}
 	}
 
 	var (
