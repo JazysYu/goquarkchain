@@ -312,27 +312,27 @@ func (t *udp) sendPing(toid enode.ID, toaddr *net.UDPAddr, callback func()) <-ch
 		To:         makeEndpoint(toaddr, 0), // TODO: maybe use known TCP port from DB
 		Expiration: uint64(time.Now().Add(expiration).Unix()),
 	}
-	fmt.Println("SSSSS-1")
+	fmt.Println("SSSSS-1", toaddr.String(), "ping")
 	packet, hash, err := encodePacket(t.priv, pingPacket, req)
 	if err != nil {
 		errc := make(chan error, 1)
 		errc <- err
 		return errc
 	}
-	fmt.Println("SSSSS-2")
+	fmt.Println("SSSSS-2", toaddr.String(), "ping")
 	errc := t.pending(toid, pongPacket, func(p interface{}) bool {
-		fmt.Println("SSSSS-3")
+		fmt.Println("SSSSS-3", toaddr.String(), "ping")
 		ok := bytes.Equal(p.(*pong).ReplyTok, hash)
 		if ok && callback != nil {
 			callback()
 		}
-		fmt.Println("SSSSS-4")
+		fmt.Println("SSSSS-4.", toaddr.String(), "ping")
 		return ok
 	})
 	t.localNode.UDPContact(toaddr)
 	fmt.Println("SSSSS-5", toaddr.String(), "ping")
 	t.write(toaddr, req.name(), packet)
-	fmt.Println("SSSSS-6")
+	fmt.Println("SSSSS-6", toaddr.String(), "ping")
 	return errc
 }
 
@@ -375,8 +375,8 @@ func (t *udp) findnode(toid enode.ID, toaddr *net.UDPAddr, target encPubkey) ([]
 // pending adds a reply callback to the pending reply queue.
 // see the documentation of type pending for a detailed explanation.
 func (t *udp) pending(id enode.ID, ptype byte, callback func(interface{}) bool) <-chan error {
-	fmt.Println("pending", ptype)
-	defer fmt.Println("pending end", ptype)
+	fmt.Println("add pending", ptype)
+	defer fmt.Println("add pending end", ptype)
 	ch := make(chan error, 1)
 	p := &pending{from: id, ptype: ptype, callback: callback, errc: ch}
 	select {
@@ -591,8 +591,8 @@ func (t *udp) readLoop(filter nodefilter.BlackFilter) {
 			log.Warn("black node in discovery connection", "remote ip", from.IP.String())
 			continue
 		}
-		fmt.Println("handle packer", from.String())
 		err = t.handlePacket(from, buf[:nbytes])
+		fmt.Println("handle packer", from.String(), err)
 		if err == errDontMatchPreFix {
 			filter.AddDialoutBlacklist(from.IP.String())
 		}
