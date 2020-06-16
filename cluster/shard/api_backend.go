@@ -365,9 +365,9 @@ func (s *ShardBackend) AddBlockListForSync(blockLst []*types.MinorBlock) error {
 		if block.Branch().Value != s.branch.Value {
 			continue
 		}
-		if s.getBlockCommitStatusByHash(blockHash) == BLOCK_COMMITTED {
-			continue
-		}
+		//if s.getBlockCommitStatusByHash(blockHash) == BLOCK_COMMITTED {
+		//	continue
+		//}
 		//TODO:support BLOCK_COMMITTING
 		fmt.Println("----i", block.Branch().Value, block.NumberU64())
 		_, xshardLst, err := s.MinorBlockChain.InsertChainForDeposits([]types.IBlock{block}, false)
