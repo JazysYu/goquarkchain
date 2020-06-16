@@ -312,21 +312,27 @@ func (t *udp) sendPing(toid enode.ID, toaddr *net.UDPAddr, callback func()) <-ch
 		To:         makeEndpoint(toaddr, 0), // TODO: maybe use known TCP port from DB
 		Expiration: uint64(time.Now().Add(expiration).Unix()),
 	}
+	fmt.Println("SSSSS-1")
 	packet, hash, err := encodePacket(t.priv, pingPacket, req)
 	if err != nil {
 		errc := make(chan error, 1)
 		errc <- err
 		return errc
 	}
+	fmt.Println("SSSSS-2")
 	errc := t.pending(toid, pongPacket, func(p interface{}) bool {
+		fmt.Println("SSSSS-3")
 		ok := bytes.Equal(p.(*pong).ReplyTok, hash)
 		if ok && callback != nil {
 			callback()
 		}
+		fmt.Println("SSSSS-4")
 		return ok
 	})
 	t.localNode.UDPContact(toaddr)
+	fmt.Println("SSSSS-5")
 	t.write(toaddr, req.name(), packet)
+	fmt.Println("SSSSS-6")
 	return errc
 }
 

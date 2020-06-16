@@ -520,6 +520,7 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 		fmt.Println("UUU-5", "1111222")
 		// Ping the selected node and wait for a pong.
 		err := tab.net.ping(last.ID(), last.addr())
+		fmt.Println("UUU-5", "44444444")
 		if err == nil {
 			// The node responded, move it to the front.
 			log.Debug("Revalidated node", "b", bi, "id", last.ID())
@@ -568,8 +569,8 @@ func (tab *Table) nextRevalidateTime() time.Duration {
 // copyLiveNodes adds nodes from the table to the database if they have been in the table
 // longer then minTableTime.
 func (tab *Table) copyLiveNodes() {
-	fmt.Println("UUU-8", "lock")
 	tab.mutex.Lock()
+	fmt.Println("UUU-8", "lock")
 	defer tab.mutex.Unlock()
 	defer fmt.Println("UUU-8", "unlock")
 
