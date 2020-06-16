@@ -238,8 +238,8 @@ func (tab *Table) setFallbackNodes(nodes []*enode.Node) error {
 
 // isInitDone returns whether the table's initial seeding procedure has completed.
 func (tab *Table) isInitDone() bool {
-	//fmt.Println("QQQQQ-1")
-	//defer fmt.Println("QQQQQQQQQQ-2")
+	fmt.Println("QQQQQ-1")
+	defer fmt.Println("QQQQQQQQQQ-2")
 	select {
 	case <-tab.initDone:
 		return true
@@ -636,11 +636,11 @@ func (tab *Table) add(n *node) {
 	if n.ID() == tab.self().ID() {
 		return
 	}
-
+	fmt.Println("UUU-9", "ready lock")
 	tab.mutex.Lock()
-	//fmt.Println("UUU-9", "lock")
+	fmt.Println("UUU-9", "lock")
 	defer tab.mutex.Unlock()
-	//defer fmt.Println("UUU-9", "unlock")
+	defer fmt.Println("UUU-9", "unlock")
 	b := tab.bucket(n.ID())
 	//fmt.Println("UUU-9", "lock-1")
 	if !tab.bumpOrAdd(b, n) {
@@ -659,10 +659,14 @@ func (tab *Table) add(n *node) {
 //
 // The caller must not hold tab.mutex.
 func (tab *Table) addThroughPing(n *node) {
+	fmt.Println("Addd-0")
 	if !tab.isInitDone() {
+		fmt.Println("Adddd-0.5")
 		return
 	}
+	fmt.Println("Addd-1")
 	tab.add(n)
+	fmt.Println("addd-2")
 }
 
 // stuff adds nodes the table to the end of their corresponding bucket
