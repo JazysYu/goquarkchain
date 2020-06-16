@@ -472,6 +472,7 @@ func (m *MinorBlockChain) InitFromRootBlock(rBlock *types.RootBlock) error {
 		log.Error("unexpected err:should have state here", "err", err)
 		return err
 	}
+	fmt.Println("NNNNNN", m.currentEvmState == nil)
 	err = m.reWriteBlockIndexTo(nil, block)
 	log.Info(m.logInfo, "init from root block end", m.CurrentBlock().NumberU64())
 	m.txPool = NewTxPool(DefaultTxPoolConfig, m)
@@ -1081,6 +1082,7 @@ func (m *MinorBlockChain) AddRootBlock(rBlock *types.RootBlock) (bool, error) {
 			return false, err
 		}
 		m.currentEvmState, err = m.StateAt(newBlock.Root())
+		fmt.Println("NNNNNNNNN", m.currentEvmState == nil)
 		if err != nil {
 			return false, err
 		}

@@ -1653,6 +1653,7 @@ func (m *MinorBlockChain) getEvmStateByBlock(block *types.MinorBlock) (*state.St
 	if bytes.Equal(block.Hash().Bytes(), m.CurrentBlock().Hash().Bytes()) {
 		m.mu.Lock()
 		stateDB := m.currentEvmState.Copy()
+		fmt.Println("========nil", m.currentEvmState == nil)
 		m.mu.Unlock()
 		return stateDB, nil
 	}
