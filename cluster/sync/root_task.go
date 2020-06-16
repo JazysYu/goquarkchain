@@ -132,7 +132,7 @@ func NewRootChainTask(
 }
 
 func (r *rootChainTask) Priority() *big.Int {
-	return r.header.GetTotalDifficulty()
+	return new(big.Int).SetUint64(r.header.NumberU64())
 }
 
 func (r *rootChainTask) PeerID() string {

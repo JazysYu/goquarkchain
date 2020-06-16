@@ -110,9 +110,9 @@ func (b *blackNodes) PeriodicallyUnblacklist() {
 		return
 	}
 	b.mu.Lock()
-	fmt.Println("BBB3--", "RLock")
+	fmt.Println("BBB3--", "Lock")
 	defer b.mu.Unlock()
-	defer fmt.Println("BBB3--", "RLock")
+	defer fmt.Println("BBB3--", "Unlock")
 	b.currTime = now
 	for ip, tm := range b.dialoutBlacklist {
 		if now.Unix() >= tm {
