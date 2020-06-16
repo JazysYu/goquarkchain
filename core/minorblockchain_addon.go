@@ -612,6 +612,7 @@ func (m *MinorBlockChain) getEvmStateByHash(hash *common.Hash) (*state.StateDB, 
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println("GGGGGGGGGGGGGG", evmState != nil)
 	}
 	return evmState, nil
 }
