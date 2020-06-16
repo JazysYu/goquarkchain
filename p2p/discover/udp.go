@@ -375,6 +375,8 @@ func (t *udp) findnode(toid enode.ID, toaddr *net.UDPAddr, target encPubkey) ([]
 // pending adds a reply callback to the pending reply queue.
 // see the documentation of type pending for a detailed explanation.
 func (t *udp) pending(id enode.ID, ptype byte, callback func(interface{}) bool) <-chan error {
+	fmt.Println("pending", ptype)
+	defer fmt.Println("pending end", ptype)
 	ch := make(chan error, 1)
 	p := &pending{from: id, ptype: ptype, callback: callback, errc: ch}
 	select {
@@ -446,6 +448,7 @@ func (t *udp) loop() {
 
 		case p := <-t.addpending:
 			p.deadline = time.Now().Add(respTimeout)
+			fmt.Println("addppp", p.ptype, p.from, p.callback, p.deadline.String())
 			plist.PushBack(p)
 
 		case r := <-t.gotreply:
@@ -474,6 +477,7 @@ func (t *udp) loop() {
 			// Notify and remove callbacks whose deadline is in the past.
 			for el := plist.Front(); el != nil; el = el.Next() {
 				p := el.Value.(*pending)
+				fmt.Println("TTTTimeOut", p.ptype, p.from, p.callback, p.deadline.String(), now.After(p.deadline) || now.Equal(p.deadline))
 				if now.After(p.deadline) || now.Equal(p.deadline) {
 					p.errc <- errTimeout
 					plist.Remove(el)
