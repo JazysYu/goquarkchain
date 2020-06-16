@@ -425,7 +425,7 @@ func (t *udp) loop() {
 		for el := plist.Front(); el != nil; el = el.Next() {
 			nextTimeout = el.Value.(*pending)
 			if dist := nextTimeout.deadline.Sub(now); dist < 2*respTimeout {
-				fmt.Println("RRRRRRRRRRRRRRRRRRRRRR", dist.Milliseconds(), now.UnixNano(), now.Add(dist).UnixNano())
+				fmt.Println("RRRRRRRRRRRRRRRRRRRRRR", dist.Milliseconds(), now.Unix(), now.Add(dist).Unix())
 				timeout.Reset(dist)
 				return
 			}
@@ -482,7 +482,7 @@ func (t *udp) loop() {
 			fmt.Println("yyyyy-1", "gotreply", "emd", matched)
 
 		case now := <-timeout.C:
-			fmt.Println("yyyyy-1", "timeout", "start", now.UnixNano())
+			fmt.Println("yyyyy-1", "timeout", "start", now.Unix(), time.Now().Unix())
 			nextTimeout = nil
 
 			// Notify and remove callbacks whose deadline is in the past.
