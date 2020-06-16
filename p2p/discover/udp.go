@@ -389,6 +389,8 @@ func (t *udp) pending(id enode.ID, ptype byte, callback func(interface{}) bool) 
 }
 
 func (t *udp) handleReply(from enode.ID, ptype byte, req packet) bool {
+	fmt.Println("handleReply", from.String(), ptype)
+	defer fmt.Println("handleReply", from.String(), ptype, "end")
 	matched := make(chan bool, 1)
 	select {
 	case t.gotreply <- reply{from, ptype, req, matched}:
@@ -431,6 +433,7 @@ func (t *udp) loop() {
 			// backwards after the deadline was assigned.
 			nextTimeout.errc <- errClockWarp
 			plist.Remove(el)
+			fmt.Println("remove----------", nextTimeout.from, nextTimeout.ptype, nextTimeout.deadline.String())
 		}
 		nextTimeout = nil
 		timeout.Stop()
@@ -459,6 +462,7 @@ func (t *udp) loop() {
 			var matched bool
 			for el := plist.Front(); el != nil; el = el.Next() {
 				p := el.Value.(*pending)
+				fmt.Println("dd", p.from.String(), p.ptype)
 				if p.from == r.from && p.ptype == r.ptype {
 					matched = true
 					// Remove the matcher if its callback indicates
@@ -474,7 +478,7 @@ func (t *udp) loop() {
 				}
 			}
 			r.matched <- matched
-			fmt.Println("yyyyy-1", "gotreply", "emd")
+			fmt.Println("yyyyy-1", "gotreply", "emd", matched)
 
 		case now := <-timeout.C:
 			fmt.Println("yyyyy-1", "timeout", "start")
