@@ -504,7 +504,8 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 		// No non-empty bucket found.
 		return
 	}
-
+	// Ping the selected node and wait for a pong.
+	err := tab.net.ping(last.ID(), last.addr())
 	inBlackList := false
 	tab.mutex.Lock()
 	fmt.Println("UUU-5", "lock")
@@ -518,8 +519,7 @@ func (tab *Table) doRevalidate(done chan<- struct{}) {
 	b := tab.buckets[bi]
 	if !inBlackList {
 		fmt.Println("UUU-5", "1111222")
-		// Ping the selected node and wait for a pong.
-		err := tab.net.ping(last.ID(), last.addr())
+
 		fmt.Println("UUU-5", "44444444")
 		if err == nil {
 			// The node responded, move it to the front.
