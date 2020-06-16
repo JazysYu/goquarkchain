@@ -238,8 +238,8 @@ func (tab *Table) setFallbackNodes(nodes []*enode.Node) error {
 
 // isInitDone returns whether the table's initial seeding procedure has completed.
 func (tab *Table) isInitDone() bool {
-	fmt.Println("QQQQQ-1")
-	defer fmt.Println("QQQQQQQQQQ-2")
+	//fmt.Println("QQQQQ-1")
+	//defer fmt.Println("QQQQQQQQQQ-2")
 	select {
 	case <-tab.initDone:
 		return true
@@ -638,18 +638,18 @@ func (tab *Table) add(n *node) {
 	}
 
 	tab.mutex.Lock()
-	fmt.Println("UUU-9", "lock")
+	//fmt.Println("UUU-9", "lock")
 	defer tab.mutex.Unlock()
-	defer fmt.Println("UUU-9", "unlock")
+	//defer fmt.Println("UUU-9", "unlock")
 	b := tab.bucket(n.ID())
-	fmt.Println("UUU-9", "lock-1")
+	//fmt.Println("UUU-9", "lock-1")
 	if !tab.bumpOrAdd(b, n) {
-		fmt.Println("UUU-9", "lock-2")
+		//fmt.Println("UUU-9", "lock-2")
 		// Node is not in table. Add it to the replacement list.
 		tab.addReplacement(b, n)
-		fmt.Println("UUU-9", "lock-3")
+		//fmt.Println("UUU-9", "lock-3")
 	}
-	fmt.Println("UUU-9", "lock-4")
+	//fmt.Println("UUU-9", "lock-4")
 }
 
 // addThroughPing adds the given node to the table. Compared to plain

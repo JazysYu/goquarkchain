@@ -210,7 +210,7 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 			newtasks = append(newtasks, t)
 		}
 	}
-	fmt.Println("DDDDDDDD-10")
+	//fmt.Println("DDDDDDDD-10")
 	// If we don't have any peers whatsoever, try to dial a random bootnode. This
 	// scenario is useful for the testnet (and private networks) where the discovery
 	// table might be full of mostly bad peers, making it hard to find good ones.
@@ -224,7 +224,7 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 			needDynDials--
 		}
 	}
-	fmt.Println("DDDDDDDD-12")
+	//fmt.Println("DDDDDDDD-12")
 	// Use random nodes from the table for half of the necessary
 	// dynamic dials.
 	randomCandidates := needDynDials / 2
@@ -266,7 +266,7 @@ func (s *dialstate) newTasks(nRunning int, peers map[enode.ID]*Peer, now time.Ti
 		t := &waitExpireTask{s.hist.min().exp.Sub(now)}
 		newtasks = append(newtasks, t)
 	}
-	fmt.Println("DDDDDDDD-19")
+	//fmt.Println("DDDDDDDD-19")
 	return newtasks
 }
 

@@ -663,7 +663,7 @@ func (srv *Server) run(dialstate dialer) {
 			fmt.Println("scheduleTasks-2", len(nt))
 			queuedTasks = append(queuedTasks, startTasks(nt)...)
 		}
-		fmt.Println("scheduleTasks-3", len(runningTasks))
+		//fmt.Println("scheduleTasks-3", len(runningTasks))
 	}
 
 	periodicallyUnblacklist := func() {
@@ -686,9 +686,9 @@ running:
 		case <-ticker.C:
 			fmt.Println("CCCCCCCCC--1")
 			scheduleTasks()
-			fmt.Println("CCCCCCCCC--2")
+			//fmt.Println("CCCCCCCCC--2")
 			periodicallyUnblacklist()
-			fmt.Println("CCCCCCCCC-3")
+			//fmt.Println("CCCCCCCCC-3")
 
 		case n := <-srv.addstatic:
 			// This channel is used by AddPeer to add to the
