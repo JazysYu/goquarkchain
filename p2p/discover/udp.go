@@ -454,9 +454,10 @@ func (t *udp) loop() {
 			return
 
 		case p := <-t.addpending:
+			fmt.Println("yyyyy-1", "addpending", "start")
 			p.deadline = time.Now().Add(respTimeout)
 			plist.PushBack(p)
-			fmt.Println("addppp", p.ptype, p.from, p.callback, p.deadline.String())
+			fmt.Println("yyyyy-1 end addppp", p.ptype, p.from, p.callback, p.deadline.String())
 
 		case r := <-t.gotreply:
 			fmt.Println("yyyyy-1", "gotreply", "start")
@@ -482,7 +483,7 @@ func (t *udp) loop() {
 			fmt.Println("yyyyy-1", "gotreply", "emd", matched)
 
 		case now := <-timeout.C:
-			fmt.Println("yyyyy-1", "timeout", "start", now.Unix(), time.Now().Unix())
+			fmt.Println("yyyyy-1", "timeoutttttt", "start", now.Unix(), time.Now().Unix())
 			nextTimeout = nil
 
 			// Notify and remove callbacks whose deadline is in the past.
