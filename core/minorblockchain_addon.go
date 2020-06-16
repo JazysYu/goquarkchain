@@ -604,7 +604,14 @@ func (m *MinorBlockChain) getEvmStateByHash(hash *common.Hash) (*state.StateDB, 
 
 	evmState, err := m.StateAt(mBlock.GetMetaData().Root)
 	if err != nil {
-		return nil, err
+		err = m.reRunBlockWithState(mBlock)
+		if err != nil {
+			panic(err)
+		}
+		evmState, err = m.StateAt(mBlock.GetMetaData().Root)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return evmState, nil
 }
